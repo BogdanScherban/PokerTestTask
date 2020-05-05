@@ -21,6 +21,9 @@ Poker = (function($) {
 
   var totalPossibleCardsArray = [];
 
+  const MAXIMAL_RANDOM_NUMBER = 100;
+  const MINIMAL_RANDOM_NUMBER = 90;
+
   var init = function() {
     $(".buttons button").on("click", eventPlayAgainClicked);
   };
@@ -59,7 +62,12 @@ Poker = (function($) {
       var card = getRandomCard();
       cardsArray.push(card);
     }
-    return cardsArray;
+    var randomValue = Math.floor(Math.random() * (MAXIMAL_RANDOM_NUMBER - MINIMAL_RANDOM_NUMBER + 1) ) + MINIMAL_RANDOM_NUMBER;
+    var pairs = getHandPairs(cardsArray);
+    if (pairs.length > 0 || (pairs.length === 0 && randomValue === MINIMAL_RANDOM_NUMBER && randomValue === MAXIMAL_RANDOM_NUMBER)) {
+      return cardsArray;
+    }
+    return getRandomHandsCards();
   };
 
   /**
@@ -173,29 +181,24 @@ Poker = (function($) {
 
   var eventPlayAgainClicked = function() {
 
-    try {
-      removePreviousResults();
-      getTotalPossibleCardsArray();
+    removePreviousResults();
+    getTotalPossibleCardsArray();
 
-      var firstHandCards = getRandomHandsCards();
-      var secondHandCards = getRandomHandsCards();
+    var firstHandCards = getRandomHandsCards();
+    var secondHandCards = getRandomHandsCards();
 
-      console.log('firstHandCards', firstHandCards);
-      console.log('secondHandCards', secondHandCards);
+    console.log('firstHandCards', firstHandCards);
+    console.log('secondHandCards', secondHandCards);
 
-      var firstHandPairs = getHandPairs(firstHandCards);
-      var secondHandPairs = getHandPairs(secondHandCards);
+    var firstHandPairs = getHandPairs(firstHandCards);
+    var secondHandPairs = getHandPairs(secondHandCards);
 
-      var winnerCard = getWinnerCard(firstHandPairs, secondHandPairs);
+    var winnerCard = getWinnerCard(firstHandPairs, secondHandPairs);
 
-      showCards(firstHandCards, ".cards-block .firstHand", winnerCard, firstHandPairs);
-      showCards(secondHandCards, ".cards-block .secondHand", winnerCard, secondHandPairs);
+    showCards(firstHandCards, ".cards-block .firstHand", winnerCard, firstHandPairs);
+    showCards(secondHandCards, ".cards-block .secondHand", winnerCard, secondHandPairs);
 
-      defineWinner(firstHandPairs, secondHandPairs, winnerCard);
-    } catch (e) {
-      window.location.reload();
-    }
-
+    defineWinner(firstHandPairs, secondHandPairs, winnerCard);
   };
 
   // expose public methods
